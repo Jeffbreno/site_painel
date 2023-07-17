@@ -15,7 +15,10 @@ class HomeController extends PageController
     public static function getHome(Request $request): string
     {
         #CONTEÚDO DA HOME
-        $content = View::render('admin/home/index', []);
+        $content = View::render('admin/home/index', [
+            'titulo'=>'Início',
+            'description'=> ''
+        ]);
 
         #RETORNA A PÁGINA COMPLETA
         return parent::getPainel('Home', $content, 'home');
