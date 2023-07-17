@@ -1,0 +1,32 @@
+<h1>Depoimentos</h1>
+<p>Depoimentos enviados pelos usuários</p>
+
+<hr />
+<a href="{{URL}}/admin/testimonies/new">
+  <button type="button" class="btn btn-success">Cadastrar Depoimento</button>
+</a>
+<hr />
+{{status}}
+<div class="table-responsive">
+  <table
+    class="table table-striped table-light table-hover align-middle"
+  >
+    <thead class="table-light">
+      <caption>
+        Table Name
+      </caption>
+      <tr>
+        <th>#</th>
+        <th>Nome</th>
+        <th>Mensagem</th>
+        <th>Data</th>
+        <th class="col-2">Ação</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      {{itens}}
+    </tbody>
+    <tfoot></tfoot>
+  </table>
+  {{pagination}}
+</div>

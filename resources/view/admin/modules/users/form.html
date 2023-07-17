@@ -1,0 +1,27 @@
+<h1>{{title}}</h1>
+
+<hr />
+<a class="btn btn-warning" href="{{URL}}/admin/users" role="button">Voltar</a>
+<hr />
+
+{{status}}
+
+<form method="post">
+
+  <div class="mb-3">
+    <label for="" class="form-label">Nome</label>
+    <input type="text" name="nome" class="form-control" placeholder="Digite o nome" value="{{nome}}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="" class="form-label">Nome</label>
+    <input type="email" name="email" class="form-control" placeholder="email@dominio.com " value="{{email}}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="" class="form-label">Senha</label>
+    <input type="password" name="senha" class="form-control" placeholder="*********">
+  </div>
+
+  <button type="submit" class="btn btn-success">Enviar</button>
+</form>
