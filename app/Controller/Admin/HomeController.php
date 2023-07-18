@@ -16,8 +16,9 @@ class HomeController extends PageController
     {
         #CONTEÚDO DA HOME
         $content = View::render('admin/home/index', [
-            'titulo'=>'Início',
-            'description'=> ''
+            'titulo' => 'Início',
+            'welcome' => '<p>Seja bem-vindo(a) ao painel administrativo</p>
+            <p>Utilize o menu a direita para navegar</p>'
         ]);
 
         #RETORNA A PÁGINA COMPLETA

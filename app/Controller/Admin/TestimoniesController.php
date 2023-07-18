@@ -50,10 +50,10 @@ class TestimoniesController extends PageController
         $currentPage = $queryParams['page'] ?? 1;
 
         //Retorna link para paginação
-        $obPagination = PageController::getPagination($request, $queryTestmonies, 5, $currentPage);
+        $obPagination = PageController::getPagination($request, $queryTestmonies, 1, $currentPage);
 
         foreach ($obPagination as $testimonies) {
-            $resultItems .= View::render('admin/modules/testimonies/item', [
+            $resultItems .= View::render('admin/testimonies/item', [
                 'id' => $testimonies->id,
                 'nome' => $testimonies->nome,
                 'mensagem' => $testimonies->mensagem,
@@ -73,7 +73,9 @@ class TestimoniesController extends PageController
     {
 
         #CONTEÚDO DA HOME DE DEPOIMENTOS
-        $content = View::render('admin/modules/testimonies/index', [
+        $content = View::render('admin/testimonies/index', [
+            'titulo' => 'Depoimentos',
+            'descricao'=> 'Depoimentos enviados pelos usuários',
             'itens' => self::getTestimonyItems($request, $obPagination),
             'pagination' => parent::getLinkPages($request, $obPagination),
             'status' => self::getStatus($request)

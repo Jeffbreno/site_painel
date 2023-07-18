@@ -89,26 +89,10 @@ class PageController
                 ]);
             }
 
-            if ($currentPage > 1) {
-                $queryParams['page'] = $currentPage - 1;
-                $link = $url . '?' . http_build_query($queryParams);
-                $after =  '<li class="page-item"><a class="page-link" href="' . $link . '">&laquo;</a></li>';
-            } else {
-                $after = '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
-            }
-
-            if ($currentPage < $lastPage) {
-                $queryParams['page'] = $currentPage + 1;
-                $link = $url . '?' . http_build_query($queryParams);
-                $next = '<li class="page-item"><a class="page-link" href="' . $link . '">&raquo;</a></li>';
-            } else {
-                $next = '<li class="page-item disabled"><span class="page-link">&raquo;</span></li>';
-            }
+            
 
             return View::render('pages/pagination/box', [
-                'links' => $links,
-                'next' => $next,
-                'after' => $after
+                'links' => $links
             ]);
         }
     }
