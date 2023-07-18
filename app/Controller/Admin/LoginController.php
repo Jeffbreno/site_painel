@@ -20,7 +20,8 @@ class LoginController extends PageController
 
         #CONTEÚDO DA PÁGINA DE LOGIN
         $content = View::render('admin/login/index', [
-            'status' => $status
+            'status' => $status,
+            'script' => '<script src="' . $_ENV['URL'] . '/resources/assets/js/validate.js"></script>'
         ]);
         #RETORNA A PÁGINA COMPLETA
         return parent::getPage('Login | Painel', $content);

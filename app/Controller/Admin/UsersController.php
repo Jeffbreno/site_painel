@@ -52,13 +52,13 @@ class UsersController extends PageController
 
         $currentPage = $queryParams['page'] ?? 1;
 
-        //Retorna link para paginação
-        $obPagination = PageController::getPagination($request, $queryTestmonies, 5, $currentPage);
+        //Seta e Retorna intens por página
+        $obPagination = PageController::setPaginator($request, $queryTestmonies, 5);
 
         // $Pagination = Page::getLinkPages($request, $queryParams, $result);
 
         foreach ($obPagination as $users) {
-            $resultItems .= View::render('admin/modules/users/item', [
+            $resultItems .= View::render('admin/users/item', [
                 'id' => $users->id,
                 'nome' => $users->nome,
                 'email' => $users->email
@@ -76,10 +76,11 @@ class UsersController extends PageController
     public static function getUsers(Request $request): string
     {
         #CONTEÚDO DA HOME DE USUÁRIOS
-        $content = View::render('admin/modules/users/index', [
+        $content = View::render('admin/users/index', [
             'itens' => self::getUserItems($request, $obPagination),
-            'pagination' => parent::getLinkPages($request, $obPagination),
-            'status' => self::getStatus($request)
+            'pagination' => parent::getPagination($request, $obPagination),
+            'status' => self::getStatus($request),
+            'descricao' => 'Lista de usuários cadastrados'
         ]);
 
         #RETORNA A PÁGINA COMPLETA
@@ -93,14 +94,13 @@ class UsersController extends PageController
     public static function getNewUsers(Request $request): string
     {
         #CONTEÚDO DA HOME DE USUÁRIOS
-        $content = View::render('admin/modules/users/form', [
-            'title' => 'Cadastrar usuário',
+        $content = View::render('admin/users/form', [
             'nome' => null,
             'email' => null,
             'senha' => null,
             'status' => self::getStatus($request)
         ]);
-        return parent::getPainel('Cadastro usuário', $content, 'users');
+        return parent::getPainel('Cadastrar usuário', $content, 'users');
     }
 
     public static function setNewUsers($request): string
@@ -130,7 +130,6 @@ class UsersController extends PageController
         //return self::getusers($request);
     }
 
-
     /**
      * Método responsável por retornar o fomulário de edição de um depoimento
      *
@@ -144,7 +143,7 @@ class UsersController extends PageController
         }
 
         #CONTEÚDO DA HOME DE USUÁRIOS
-        $content = View::render('admin/modules/users/form', [
+        $content = View::render('admin/users/form', [
             'title' => 'Editar usuário',
             'nome' => $obUser->nome,
             'email' => $obUser->email,
@@ -204,7 +203,7 @@ class UsersController extends PageController
         }
 
         #CONTEÚDO DA HOME DE USUÁRIOS
-        $content = View::render('admin/modules/users/delete', [
+        $content = View::render('admin/users/delete', [
             'title' => 'Excluir usuário',
             'nome' => $obUser->nome,
             'email' => $obUser->email,

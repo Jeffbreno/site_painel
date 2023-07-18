@@ -9,36 +9,68 @@ use Illuminate\Support\Collection;
 
 class PageController
 {
-
     /**
      * Modulos disponíveis no painel
      */
     private static array $modules = [
         'home' => [
             'label' => 'Home',
-            'link' => URL . '/admin'
+            'link' => URL . '/admin',
+            'data-feather' => 'sliders'
 
         ],
         'testimonies' => [
             'label' => 'Depoimentos',
-            'link' => URL . '/admin/testimonies'
+            'link' => URL . '/admin/testimonies',
+            'data-feather' => 'book'
 
         ],
         'users' => [
             'label' => 'Usuários',
-            'link' => URL . '/admin/users'
+            'link' => URL . '/admin/users',
+            'data-feather' => 'user'
 
         ]
     ];
 
     /**
+     * Método responsável por retornar um link da paginação
+     */
+    private static function getLinks(mixed $page, mixed $url, $ultimaPagina = null): string
+    {
+        if ($ultimaPagina) {
+            $queryParams['page'] = $ultimaPagina;
+        } else {
+            $queryParams['page'] = $page['page'];
+        }
+        #LINK
+        if ($page['page'] == 0) {
+            $link = $url . '?page=1';
+        } else {
+            $link = $url . '?' . http_build_query($queryParams);
+        }
+
+
+        #VIEW
+        return View::render('pages/pagination/link', [
+            'page' => $ultimaPagina ? 'Última' : ($page['page'] == 0 ? 'Primeira' : $page['page']),
+            'link' => $link,
+            'active' => ($page['current'] ? 'active' : '')
+        ]);
+    }
+
+    /**
      * Método generico para páginação
      * 
      */
-    public static function getPagination(Request $request, Collection $items, int $perPage = 10, int $currentPage = null)
+    public static function setPaginator(Request $request, Collection $items, int $perPage = 10)
     {
         $options = [];
         $options['path'] = $options['path'] ?? $request->getRouter()->getCurrentUrl();
+
+        //GET DA PAGINA ATUAL 
+        $queryParams = $request->getQueryParams();
+        $currentPage = $queryParams['page'] ?? 1;
 
         $items = $items instanceof Collection ? $items : Collection::make($items);
 
@@ -52,6 +84,67 @@ class PageController
 
         return $paginator->withPath($options['path']);
     }
+
+     /**
+     * Método responsavél por gerar links de paginação
+     */
+    public static function getPagination($request, $resultadosPaginados)
+    {
+        $currentPage = $resultadosPaginados->currentPage();
+        $lastPage = $resultadosPaginados->lastPage();
+        $url = $request->getRouter()->getCurrentUrl();
+        $links = '';
+
+        //LIMITE DA PAGINAÇÃO
+        $limit = $_ENV['PAG_LIMIT'];
+
+        //MEIO DA PAGINAÇÃO
+        $middle = ceil($limit / 2);
+
+        //INICIO DA PAGINAÇÃO
+        $start = $middle > $currentPage ? 0 : $currentPage - $middle;
+
+        //AJUTA O FINAL DA PAGINAÇÃO
+        $limit = $limit + $start;
+
+        if ($lastPage > 1) {
+
+            //AJUSTA O LIMITE DA PAGINAÇÃO
+            if ($limit > $lastPage) {
+                $diff = $limit - $lastPage;
+                $start -= $diff;
+            }
+
+            //LINK INICIAL
+            if ($start > 0) {
+                $page['page'] = 0;
+                $page['current'] = 0;
+                $links .= self::getLinks($page, $url);
+            }
+
+            // Links de páginas numeradas
+            for ($i = 1; $i <= $lastPage; $i++) {
+                $page['page'] = $i;
+                $page['current'] = ($i === $currentPage ? 1 : 0);
+
+                //VERIFICA O START DA PAGINAÇÃO
+                if ($page['page'] <= $start) continue;
+
+                //VERIFICA O LIMITE DA PAGINAÇÃO
+                if ($page['page'] > $limit) {
+                    $links .= self::getLinks($page, $url, $lastPage);
+                    break;
+                }
+
+                $links .= self::getLinks($page, $url);
+            }
+
+            #REDERIZA BOX DOS LINKS
+            return View::render('pages/pagination/box', [
+                'links' => $links,
+            ]);
+        }
+    }
     /**
      * Método responsável de retornar conteúdo (view) da estrutura genérica de página do painel
      *
@@ -62,39 +155,6 @@ class PageController
             'title' => $title,
             'content' => $content
         ]);
-    }
-
-    /**
-     * Método responsável por gerar links de páginação
-     */
-    public static function getLinkPages(Request $request, mixed $resultadosPaginados)
-    {
-        $currentPage = $resultadosPaginados->currentPage();
-        $lastPage = $resultadosPaginados->lastPage();
-        $url = $request->getRouter()->getCurrentUrl();
-        $link = '';
-        $links = '';
-        if ($lastPage > 1) {
-
-            // Links de páginas numeradas
-            for ($i = 1; $i <= $lastPage; $i++) {
-                $queryParams['page'] = $i;
-
-                $link = $url . '?' . http_build_query($queryParams);
-
-                $links .= View::render('pages/pagination/link', [
-                    'page' => $i,
-                    'link' => $link,
-                    'active' => ($i === $currentPage ? 'active' : '')
-                ]);
-            }
-
-            
-
-            return View::render('pages/pagination/box', [
-                'links' => $links
-            ]);
-        }
     }
 
     /**
@@ -110,7 +170,8 @@ class PageController
             $links .= View::render('admin/menu/link', [
                 'label' => $module['label'],
                 'link' => $module['link'],
-                'current' => $hash == $currentModule ? 'text-danger' : ''
+                'data-feather' => $module['data-feather'],
+                'current' => $hash == $currentModule ? 'active' : ''
             ]);
         }
 
@@ -128,8 +189,9 @@ class PageController
     {
         #RENDERIZA A VIEW DO PAINEL
         $contentPainel = View::render('admin/layout/painel', [
-            //'menu' => self::getMenu($currentModule),
-            'content' => $content
+            'menu' => self::getMenu($currentModule),
+            'content' => $content,
+            'titulo' => $title
         ]);
         #RETORNA PÁGINA RENDERIZADA
         return self::getPage($title, $contentPainel);

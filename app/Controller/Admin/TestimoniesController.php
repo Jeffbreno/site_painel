@@ -8,7 +8,6 @@ use App\Model\Entity\Testimony as EntityTestimony;
 
 class TestimoniesController extends PageController
 {
-
     /**
      * Método reponsável por retornar mensagem de status
      *
@@ -24,7 +23,6 @@ class TestimoniesController extends PageController
         switch ($queryParams['status']) {
             case 'created':
                 return AlertController::getSuccess('Depoimento criado com sucesso!');
-
             case 'update':
                 return AlertController::getSuccess('Depoimento atualizado com sucesso!');
             case 'deleted':
@@ -44,13 +42,8 @@ class TestimoniesController extends PageController
         // RESULTADO DA PÁGINA
         $queryTestmonies = EntityTestimony::orderBy('id', 'desc')->get();
 
-        //GET DA PAGINA ATUAL 
-        $queryParams = $request->getQueryParams();
-
-        $currentPage = $queryParams['page'] ?? 1;
-
-        //Retorna link para paginação
-        $obPagination = PageController::getPagination($request, $queryTestmonies, 1, $currentPage);
+        //Seta e Retorna intens por página
+        $obPagination = PageController::setPaginator($request, $queryTestmonies,5);
 
         foreach ($obPagination as $testimonies) {
             $resultItems .= View::render('admin/testimonies/item', [
@@ -74,10 +67,9 @@ class TestimoniesController extends PageController
 
         #CONTEÚDO DA HOME DE DEPOIMENTOS
         $content = View::render('admin/testimonies/index', [
-            'titulo' => 'Depoimentos',
-            'descricao'=> 'Depoimentos enviados pelos usuários',
+            'descricao' => 'Lista de depoimentos cadastrados',
             'itens' => self::getTestimonyItems($request, $obPagination),
-            'pagination' => parent::getLinkPages($request, $obPagination),
+            'pagination' => parent::getPagination($request, $obPagination),
             'status' => self::getStatus($request)
         ]);
 
@@ -92,11 +84,12 @@ class TestimoniesController extends PageController
     public static function getNewTestimonies(Request $request): string
     {
         #CONTEÚDO DA HOME DE DEPOIMENTOS
-        $content = View::render('admin/modules/testimonies/form', [
-            'title' => 'Cadastrar depoimento',
+        $content = View::render('admin/testimonies/form', [
+            'titulo' => 'Cadastrar depoimento',
             'nome' => null,
             'mensagem' => null,
-            'status' => self::getStatus($request)
+            'status' => self::getStatus($request),
+            'script' => '<script src="' . $_ENV['URL'] . '/resources/assets/js/validate.js"></script>'
         ]);
         return parent::getPainel('Cadastro depoimento', $content, 'testimonies');
     }
@@ -129,11 +122,12 @@ class TestimoniesController extends PageController
         }
 
         #CONTEÚDO DA HOME DE DEPOIMENTOS
-        $content = View::render('admin/modules/testimonies/form', [
-            'title' => 'Cadastrar depoimento',
+        $content = View::render('admin/testimonies/form', [
+            'titulo' => 'Cadastrar depoimento',
             'nome' => $obTestimony->nome,
             'mensagem' => $obTestimony->mensagem,
-            'status' => self::getStatus($request)
+            'status' => self::getStatus($request),
+            'script' => '<script src="' . $_ENV['URL'] . '/resources/assets/js/validate.js"></script>'
         ]);
         return parent::getPainel('Editar depoimento', $content, 'testimonies');
     }
@@ -170,7 +164,7 @@ class TestimoniesController extends PageController
         }
 
         #CONTEÚDO DA HOME DE DEPOIMENTOS
-        $content = View::render('admin/modules/testimonies/delete', [
+        $content = View::render('admin/testimonies/delete', [
             'title' => 'Excluir depoimento',
             'nome' => $obTestimony->nome,
             'mensagem' => $obTestimony->mensagem,

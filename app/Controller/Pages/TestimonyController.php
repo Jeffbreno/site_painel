@@ -21,7 +21,7 @@ class TestimonyController extends PageController
         $queryTestmonies = EntityTestimony::orderBy('id', 'desc')->get();
 
         //Seta e Retorna intens por página
-        $obPagination = PageController::setPaginator($request, $queryTestmonies, 1);
+        $obPagination = PageController::setPaginator($request, $queryTestmonies, 10);
 
         foreach ($obPagination as $testimonies) {
             $resultItems .= View::render('pages/testimony/item', [
@@ -46,7 +46,7 @@ class TestimonyController extends PageController
             'pagination' => parent::getPagination($request, $obPagination)
         ]);
 
-        return parent::getPage('Site Igreja', $content);
+        return parent::getPage('Site', $content);
     }
 
     /**
