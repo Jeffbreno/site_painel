@@ -1,4 +1,4 @@
-<h1>{{title}}</h1>
+<!-- <h1>{{title}}</h1>
 <hr />
 <a class="btn btn-warning" href="{{URL}}/admin/testimonies" role="button"
   >Voltar</a
@@ -12,4 +12,22 @@
   </div>
 
   <button type="submit" class="btn btn-danger">Excluir</button>
-</form>
+</form> -->
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Você tem certeza que deseja excluir este registro?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>
