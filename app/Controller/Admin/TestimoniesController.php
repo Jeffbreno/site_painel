@@ -43,7 +43,7 @@ class TestimoniesController extends PageController
         $queryTestmonies = EntityTestimony::orderBy('id', 'desc')->get();
 
         //Seta e Retorna intens por página
-        $obPagination = PageController::setPaginator($request, $queryTestmonies,5);
+        $obPagination = PageController::setPaginator($request, $queryTestmonies, 5);
 
         foreach ($obPagination as $testimonies) {
             $resultItems .= View::render('admin/testimonies/item', [
@@ -177,17 +177,17 @@ class TestimoniesController extends PageController
      * Método responsavel por excluir um depoimento
      *
      */
-    public static function setDeleteTestimonies(Request $request, int $id)
+    public static function setDeleteTestimonies(Request $request, int $id): string
     {
         $obTestimony = EntityTestimony::getById($id);
 
         if (!$obTestimony instanceof EntityTestimony) {
-            $request->getRouter()->redirect('/admin/testimonies');
+            //$request->getRouter()->redirect('/admin/testimonies');
         }
 
         #EXCLUI O REGISTRO
         $obTestimony->delete();
 
-        return $request->getRouter()->redirect('/admin/testimonies?status=deleted');
+        return 'status=deleted';//$request->getRouter()->redirect('/admin/testimonies?status=deleted');
     }
 }

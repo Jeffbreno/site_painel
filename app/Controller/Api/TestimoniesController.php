@@ -159,7 +159,7 @@ class TestimoniesController extends ApiController
         $obTestimony = EntityTestimony::getById($id);
 
         if (!$obTestimony instanceof EntityTestimony) {
-            throw new Exception("O depoimento " . $id . " não doi encontrado", 404);
+            throw new Exception("O depoimento " . $id . " não foi encontrado", 404);
         }
 
         #EXCLUI O REGISTRO

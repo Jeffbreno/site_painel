@@ -1,15 +1,18 @@
 {{status}}
-<form method="post">
+<form method="post" class="needs-validation" novalidate>
   <div class="mb-3">
     <label for="" class="form-label">Nome</label>
-    <input type="text" name="nome" class="form-control" placeholder="Digite o nome" value="{{nome}}" required />
+    <input type="text" name="nome" class="form-control" placeholder="Digite o nome" value="{{nome}}" minlength="5" required />
+    <div class="invalid-feedback">O campo NOME deve ter no mínimo 5 caracteres.</div>
   </div>
 
   <div class="mb-3">
     <label class="form-label">Descrição</label>
-    <textarea class="form-control" name="mensagem" cols="30" rows="10">{{mensagem}}</textarea>
+    <textarea class="form-control" name="mensagem" cols="30" rows="10" minlength="5" required>{{mensagem}}</textarea>
+    <div class="invalid-feedback">O campo MENSAGEM deve ter no mínimo 5 caracteres.</div>
   </div>
 
   <button type="submit" class="btn btn-success">Enviar</button>
   <a class="btn btn-warning" href="{{URL}}/admin/testimonies" role="button">Cancelar</a>
 </form>
+{{script}}
