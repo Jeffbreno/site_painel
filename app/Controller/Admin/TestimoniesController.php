@@ -175,19 +175,19 @@ class TestimoniesController extends PageController
 
     /**
      * Método responsavel por excluir um depoimento
-     *
+     * @return void
      */
-    public static function setDeleteTestimonies(Request $request, int $id): string
+    public static function setDeleteTestimonies(Request $request, int $id)
     {
         $obTestimony = EntityTestimony::getById($id);
 
         if (!$obTestimony instanceof EntityTestimony) {
-            //$request->getRouter()->redirect('/admin/testimonies');
+            $request->getRouter()->redirect('/admin/testimonies');
         }
 
         #EXCLUI O REGISTRO
         $obTestimony->delete();
 
-        return 'status=deleted';//$request->getRouter()->redirect('/admin/testimonies?status=deleted');
+        return $request->getRouter()->redirect('/admin/testimonies?status=deleted');
     }
 }

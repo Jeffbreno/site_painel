@@ -1,61 +1,58 @@
-// Função para abrir a modal de confirmação
-function abrirModalConfirmacao(idDoItem) {
-  // const modal = document.getElementById('modal-confirmacao');
-  const modal = document.getElementById("modal-confirmacao");
-  if (modal) {
-    let bootstrapModal = new bootstrap.Modal(modal);
-    bootstrapModal.show();
-    excluirItem(idDoItem);
+(function (doc) {
+  "use strict";
+
+  function excluirItem(idDoItem) {
+    console.log(idDoItem);
+    // Fazer a requisição AJAX para excluir o item
+    // fetch("/admin/testimonies/" + 0 + "/delete", {
+    //   method: "POST",
+    // })
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       console.log(response);
+    //       // Se a exclusão foi bem-sucedida, remover o item da lista na tela
+    //       const linhaExcluida = document.querySelector(`tr[data-id="${idDoItem}"]`);
+    //       if (linhaExcluida) {
+    //         linhaExcluida.remove();
+    //       }
+    //     } else {
+    //       // Tratar o erro ou mostrar uma mensagem de falha
+    //       console.error("Falha ao excluir o item.");
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     // Tratar erros de requisição, caso ocorram
+    //     console.error("Erro na requisição:", error);
+    //   });
   }
-}
 
-// Função para fechar a modal de confirmação
-function fecharModalConfirmacao() {
-  const modal = $("#modal-confirmacao");
-  if (modal) {
-    modal.modal("hide");
-  }
-}
+  // Evento para excluir o item quando um botão de exclusão for clicado
+  const botoesExclusao = doc.querySelectorAll(".btn-excluir");
+  botoesExclusao.forEach((botao) => {
+    botao.addEventListener("click", (event) => {
+      event.preventDefault(); // Impede a ação padrão do botão (se houver)
+      const idDoItem = botao.getAttribute("data-id");
 
-// Evento para abrir a modal de confirmação quando um botão de exclusão for clicado
-const botoesExclusao = document.querySelectorAll(".btn-excluir");
-botoesExclusao.forEach((botao) => {
-  botao.addEventListener("click", (event) => {
-    event.preventDefault();
-    delete window.idDoItem;
-    idDoItem = botao.getAttribute("data-id");
-    //ABRE A TELA MODAL E ENVIA O ID DE EXCLUSÃO
-    abrirModalConfirmacao(idDoItem);
-  });
-});
-
-function excluirItem(id) {
-  const botaoExclusao = document.getElementById("btn-confirmar-exclusao");
-  botaoExclusao.addEventListener("click", () => {
-    // Realizar a solicitação AJAX
-    $.ajax({
-      url: '/admin/testimonies/'+id+'/delete', 
-      type: "POST",
-      //dataType: "json", // Define o tipo de dados que espera receber como resposta
-      success: function (response) {
-        // Função executada em caso de sucesso
-        console.log("Resposta do servidor:", response);
-        alert("Dados enviados com sucesso!");
-      },
-      error: function (xhr, status, error) {
-        // Função executada em caso de erro
-        console.error("Erro na solicitação AJAX:", error);
-        alert("Ocorreu um erro ao enviar os dados.");
-      },
+      abrirModalConfirmacao(idDoItem);
     });
-    fecharModalConfirmacao();
   });
-}
 
-// Evento para fechar a modal de confirmação quando o botão "Cancelar" for clicado
-const botaoCancelar = document.getElementById("btn-cancelar-exclusao");
-if (botaoCancelar) {
-  botaoCancelar.addEventListener("click", () => {
-    fecharModalConfirmacao();
-  });
-}
+  // Função para abrir a modal de confirmação
+  let handlerExcluir = null;
+  function abrirModalConfirmacao(idDoItem) {
+    $("#modal-confirmacao").modal("show");
+    let botaoExclusao = doc.getElementById("btn-confirmar-exclusao");
+    if (handlerExcluir) {
+      botaoExclusao.removeEventListener("click", handlerExcluir);
+    }
+
+    handlerExcluir = () => {
+      // Chamar a função de exclusão passando o idDoItem
+      excluirItem(idDoItem);
+      // Fechar a modal após a exclusão
+      $("#modal-confirmacao").modal("hide");
+    };
+
+    botaoExclusao.addEventListener("click", handlerExcluir);
+  }
+})(document);
