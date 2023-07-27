@@ -10,6 +10,7 @@
     "illuminate/database": "^10.13",
     "illuminate/pagination": "^10.13",
     "firebase/php-jwt": "^6.8",
-    "phpmailer/phpmailer": "^6.8"
+    "phpmailer/phpmailer": "^6.8",
+    "setasign/fpdf": "^1.8"
   }
 }
