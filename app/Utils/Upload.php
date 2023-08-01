@@ -2,56 +2,49 @@
 
 namespace App\Utils;
 
+use App\Model\Entity\User as EntityUser;
+
 class Upload
 {
-    private $uploadDir;
-    private $allowedExtensions;
+    private string $uploadDir;
+    private array $allowedExtensions;
+    private float $maxFileSize;
 
-    public function __construct($uploadDir, $allowedExtensions)
+    public function __construct($uploadDir, $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'), $maxFileSize = 25)
     {
         $this->uploadDir = $uploadDir;
         $this->allowedExtensions = $allowedExtensions;
+        $this->maxFileSize = $maxFileSize;
     }
 
-    public function uploadFile($file, $userId)
+    public function uploadFiles($uploadedFiles)
     {
-        // Verifica se o usuário tem permissão para fazer o upload
-        if (!$this->isUserAuthorized($userId)) {
-            return "Usuário não autorizado.";
+        $uploadedFilesInfo = array();
+
+        // VERIFICA SE TEM ARQUIVOS PARA UPLOAD
+        if (!empty($uploadedFiles)) {
+
+
+
         }
 
-        $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
 
-        // Verifica se a extensão do arquivo é permitida
-        if (!in_array(strtolower($fileExtension), $this->allowedExtensions)) {
-            return "Tipo de arquivo não permitido.";
-        }
+        // $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
 
-        // Gera um nome único para o arquivo
-        $fileName = uniqid() . "." . $fileExtension;
+        // // Verifica se a extensão do arquivo é permitida
+        // if (!in_array(strtolower($fileExtension), $this->allowedExtensions)) {
+        //     return "Tipo de arquivo não permitido.";
+        // }
 
-        // Move o arquivo temporário para o diretório de uploads
-        if (!move_uploaded_file($file['tmp_name'], $this->uploadDir . "/" . $fileName)) {
-            return "Erro ao fazer upload do arquivo.";
-        }
+        // // Gera um nome único para o arquivo
+        // $fileName = uniqid() . "." . $fileExtension;
 
-        // Retornar o caminho do arquivo no servidor
-        return $this->uploadDir . "/" . $fileName;
-    }
+        // // Move o arquivo temporário para o diretório de uploads
+        // if (!move_uploaded_file($file['tmp_name'], $this->uploadDir . "/" . $fileName)) {
+        //     return "Erro ao fazer upload do arquivo.";
+        // }
 
-    private function isUserAuthorized($userId)
-    {
-        // Verificar no banco de dados se o usuário está cadastrado e tem permissão de acesso
-        // Você precisa implementar a lógica de autenticação e verificação de permissões aqui
-        // Retorne true se o usuário estiver autorizado e false caso contrário.
-        // Exemplo fictício para demonstração:
-        // $query = "SELECT COUNT(*) FROM usuarios WHERE id = :userId AND permissao_upload = 1";
-        // $stmt = $this->dbConnection->prepare($query);
-        // $stmt->bindValue(':userId', $userId);
-        // $stmt->execute();
-        // $count = $stmt->fetchColumn();
-        // return ($count > 0);
-
-        // Note que esse é apenas um exemplo fictício. A implementação real depende do seu sistema de autenticação e banco de dados.
+        // // Retornar o caminho do arquivo no servidor
+        // return $this->uploadDir . "/" . $fileName;
     }
 }
