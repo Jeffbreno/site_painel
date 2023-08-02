@@ -2,7 +2,9 @@
 
 namespace App\Utils;
 
-use App\Model\Entity\User as EntityUser;
+
+use App\Controller\Admin\AlertController;
+use Exception;
 
 class Upload
 {
@@ -17,34 +19,36 @@ class Upload
         $this->maxFileSize = $maxFileSize;
     }
 
-    public function uploadFiles($uploadedFiles)
+    public function upload(array $file): string
     {
-        $uploadedFilesInfo = array();
-
-        // VERIFICA SE TEM ARQUIVOS PARA UPLOAD
-        if (!empty($uploadedFiles)) {
-
-
-
+        // Verifica se houve algum erro no upload
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception('Erro no upload do arquivo.');
         }
 
+        // Obtém informações sobre o arquivo
+        $fileName = basename($file['name']);
+        $fileSize = $file['size'];
+        $fileTmp = $file['tmp_name'];
 
-        // $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        // Verifica a extensão do arquivo
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        if (!in_array($fileExtension, $this->allowedExtensions)) {
+            return AlertController::getError('Extensão de arquivo não permitida.');
+        }
 
-        // // Verifica se a extensão do arquivo é permitida
-        // if (!in_array(strtolower($fileExtension), $this->allowedExtensions)) {
-        //     return "Tipo de arquivo não permitido.";
-        // }
+        // Verifica o tamanho do arquivo
+        if ($fileSize > $this->maxFileSize) {
+            return AlertController::getError('Tamanho de arquivo excede o limite permitido.');
+        }
 
-        // // Gera um nome único para o arquivo
-        // $fileName = uniqid() . "." . $fileExtension;
+        // Gera um nome único para o arquivo e move para o diretório de upload
+        $uniqueFileName = uniqid() . '.' . $fileExtension;
+        $destination = $this->uploadDir . DIRECTORY_SEPARATOR . $uniqueFileName;
+        if (!move_uploaded_file($fileTmp, $destination)) {
+            return AlertController::getError('Falha ao mover o arquivo para o diretório de upload.');
+        }
 
-        // // Move o arquivo temporário para o diretório de uploads
-        // if (!move_uploaded_file($file['tmp_name'], $this->uploadDir . "/" . $fileName)) {
-        //     return "Erro ao fazer upload do arquivo.";
-        // }
-
-        // // Retornar o caminho do arquivo no servidor
-        // return $this->uploadDir . "/" . $fileName;
+        return $uniqueFileName;
     }
 }
